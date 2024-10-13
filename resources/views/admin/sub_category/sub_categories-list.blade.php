@@ -67,7 +67,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (!empty($sub_categories))
+                      
+                        @if ($sub_categories->isNotEmpty())
+
                         @foreach ($sub_categories as $sub_category)
 
 

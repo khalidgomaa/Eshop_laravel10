@@ -78,7 +78,7 @@ return view('admin.category.create');
         ]);
     }
 }
-       $request->session()->flash('success','Category added successfully');
+      session()->flash('success','Category added successfully');
        return response()->json([
         'status' => true,
         'message' =>'Category added successfully',
@@ -91,7 +91,7 @@ return view('admin.category.create');
         }
     }
 
-  
+  //~ ******************** updating  *************
     public function edit($category_id,Request $request){
         
         $category=Category::find($category_id);
@@ -175,19 +175,24 @@ return view('admin.category.create');
         }
     }
     
+
+  //~ ******************** Deleting  *************
+
     public function destroy($category_id){
         $category = Category::find($category_id);
         
-        if ($category) {
-            $categoryImage = $category->image;
-            
-           
-            if (!empty($categoryImage)) {
-                File::delete(public_path('uploads/category/' . $categoryImage));
-            }
-            
-         
-            $category->delete();
+        
+        if (empty($category)) {
+            session()->flash('error', value: 'Category not found');
+            return response()->json([
+                'status' => false,
+                'notFound'=>true,
+                'message' => 'Category not found',
+            ]);
+        }
+   
+                File::delete(public_path('uploads/category/' . $category->Image));
+                $category->delete();
     
             session()->flash('success', 'Category deleted successfully');
             
@@ -195,14 +200,10 @@ return view('admin.category.create');
                 'status' => true,
                 'message' => 'Category deleted successfully',
             ]);
-        } else {
-            session()->flash('errors', 'Category not found');
-            return response()->json([
-                'status' => false,
-                'notFound'=>true,
-                'message' => 'Category not found',
-            ]);
-        }
+      
+
+      
+     
     }
     
 }

@@ -3,12 +3,12 @@
 
 namespace Database\Factories;
 
-// use App\Models\Sub_Category;
+// use App\Models\SubCategory;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-class Sub_CategoryFactory extends Factory
+class SubCategoryFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.

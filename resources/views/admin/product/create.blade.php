@@ -215,10 +215,16 @@
                 </div>
             </div>
 
-            <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-primary" id="productFormBtn">Create</button>
-                <a href="products.html" class="btn btn-outline-dark ml-3">Cancel</a>
+            <div class="pb-5 pt-3 d-flex align-items-center">
+                <button id="createProductBtn" type="submit" class="btn btn-primary">Create</button>
+                <div id="loader" style="display: none;" class="spinner-border text-primary ml-3" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <a href="{{ route('products.index') }}"  class="btn btn-outline-dark ml-3">Cancel</a>
+
+        
             </div>
+
         </form>
     </div>
     <!-- /.card -->
@@ -232,18 +238,28 @@
     $("#productForm").submit(function(event) {
         event.preventDefault();
         var element = $(this);
-        $('#createSubCategoryBtn').prop('disabled', true);
+        $("#loader").show();
+        $("#createProductBtn").hide();
+        // $('#createProductBtn').prop('disabled', true);
         $.ajax({
-            url: '{{ route('product.store') }}',
+            url: "{{ route('product.store') }}",
             type: 'post',
             data: element.serializeArray(),
-            dataType: 'formArray',
+            dataType: 'json',
             success: function(response) {
                 if (response['status'] == true) {
+                    $("#loader").hide();
+                    $("#createProductBtn").show();
+                    window.location.href = '{{ route("products.index") }}';
+
                     $(".error").removeClass("invalid-feedback").html('');
                     $("input[type='text'], select, input[type='number']").removeClass("is-invalid");
-                    window.location.href = "{{ route('products.index') }}";
+                   
+
                 } else {
+                    console.log(response.errors);
+                    $("#loader").hide();
+                    $("#createProductBtn").show();
                     var errors = response['errors'];
                     $("input[type='text'], select, input[type='number']").removeClass("is-invalid");
                     $(".error").removeClass("invalid-feedback").html('');
@@ -255,7 +271,9 @@
                 }
             },
             error: function(jqXHR, exception) {
-                console.log("something went wrong");
+                $("#loader").hide();
+                $("#createProductBtn").show();
+                console.log("Something went wrong", jqXHR);
             }
         });
     });
@@ -333,17 +351,33 @@
         success: function(file, response) {
             $("#image_id").val(response.image_id);
 
-            var imagesContainer = `<div class="card" style="width: 18rem;">
+            var imagesContainer = `<div class="card" id="imageRow${response.image_id}" style="width: 18rem;">
                 <input type="hidden" name="product_gallary[]" value="${response['image_id']}">
                 <img src="${response['image-path']}" class="card-img-top" alt="..." width="150" height="150">
                 <div class="card-body">
-                    <a href="#" class="btn btn-primary">Delete</a>
+                    <a href="javascript:void(0)" onclick="deleteImage(${response.image_id})" class="btn btn-primary">Delete</a>
                 </div>
             </div>`;
 
             $('#product-gallary').append(imagesContainer);
+        },
+        complete:function (file){
+            this.removeFile(file);
         }
     });
+
+
+
+    function deleteImage(imageId) {
+ 
+    var imageElement = $(`#imageRow${imageId}`);
+    
+    if (imageElement.length) {
+        imageElement.remove(); 
+    } else {
+        console.error(`Element with ID imageRow${imageId} not found.`);
+    }
+}
 </script>
 
 

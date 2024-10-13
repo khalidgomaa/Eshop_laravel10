@@ -85,7 +85,7 @@
                                     fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                     aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">{{ $category->slug }}</path>
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </td>
                             @else
@@ -156,9 +156,10 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response){
-                if (response.status == true){
+                if (response.status === true) {
+                 
                     window.location.href = '{{ route("categories.index") }}';
-                }
+                } 
             },
             error: function(jqXHR, exception){
                 console.log("Something went wrong");

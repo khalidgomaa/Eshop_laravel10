@@ -8,7 +8,7 @@ use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\admin\productSubcategoryController;
-use GuzzleHttp\Middleware;
+use App\Http\Controllers\admin\SlugController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -50,18 +50,7 @@ Route::group(['prefix'=>'admin'],function(){
             Route::get('/categories/{category_id}/edit',[CategoryController::class,'edit'])->name('category.edit');
             Route::put('/categories/{category_id}',[CategoryController::class,'update'])->name('category.update');
             Route::delete('/categories/{category_id}',[CategoryController::class,'destroy'])->name('category.delete');
-            Route::get('/categories/getSlug', function(Request $request) {
-                $slug = ''; 
-  
-                if (!empty($request->title)) {
-                    $slug = Str::slug($request->title);
-                }
-                return response()->json([
-                    'status' => true,
-                    'slug' => $slug,
-                    
-                ]);
-            })->name('getSlug');
+            Route::get('/categories/getSlug',[SlugController::class,'generateSlug'] )->name('getSlug');
             
                 // create image
             Route::post('/upload-temp.image',[TempImagesController::class,'create'])->name('temp-image.create');

@@ -65,7 +65,7 @@
                             </div>
                             @if(!empty($category))
                             <div>
-                                <img width="250" src="{{ asset('uploads/category/' . $category->image) }}" alt="">
+                                <img class="m-2" width="120" height="120" src="{{ asset('uploads/category/' . $category->image) }}" alt="">
                             </div>
 
                             @endif

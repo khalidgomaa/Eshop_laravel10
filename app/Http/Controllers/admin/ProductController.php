@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Product_Image;
+use App\Models\ProductImage;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -15,6 +15,18 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+
+    public function index(Request $request){
+        $products = Product :: latest('id')->with('Product_Images');
+        if(!empty($request->get('keyword'))){
+            $products=$products->where('title','like','%'.$request->get('keyword').'%');
+        }
+
+        $products = $products->paginate(10);
+        return view('admin.product.products-list',compact('products'));
+    }
+
+
     public function create(){
         $data=[];
         $categories=Category::orderBy('name','ASC')->get();
@@ -37,7 +49,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
             'category' => 'required|exists:categories,id',
-            'sub_category' => 'nullable|exists:sub__categories,id',
+            'sub_category' => 'nullable|exists:sub_categories,id',
             'brand' => 'nullable|exists:brands,id',
             'is_featured' => 'required|in:Yes,No',
             'sku' => 'required|string|max:255|unique:products',
@@ -62,7 +74,7 @@ class ProductController extends Controller
             $product->sku = $request->sku;
             $product->category_id = $request->category;
             $product->brand_id = $request->brand;
-            $product->sub__category_id = $request->sub_category;
+            $product->sub_category_id = $request->sub_category;
             $product->track_qty = $request->track_qty;
             $product->status = $request->status;
             $product->save();
@@ -75,7 +87,7 @@ class ProductController extends Controller
                     if ($tempImage) {
                         $tempImageArray = explode('.', $tempImage->name);
                         $ext = last($tempImageArray);
-                        $productImage = new Product_Image();
+                        $productImage = new ProductImage();
                         $productImage->product_id = $product->id;
                         $productImage->image ='NULL';
                         $productImage->save();
@@ -83,6 +95,7 @@ class ProductController extends Controller
                         $productImageName = $product->id . '-' . $tempImage->id . '-' . time() . '.' . $ext;
                         $productImage->image = $productImageName;
                         $productImage->save();
+
                         $spath = public_path('temp_images/' . $tempImage->name);
                         $dpath = public_path('uploads/product/' . $productImageName);
                       
@@ -91,7 +104,7 @@ class ProductController extends Controller
                             File::copy($spath, $dpath);
                             
                                 
-                          
+
                         } else {
                             \Log::error('File does not exist at ' . $spath);
                         }
@@ -100,7 +113,11 @@ class ProductController extends Controller
                     }
                 }
             }
-            return response()->json(['status' => true, 'message' => 'Product and images saved successfully']);
+            session()->flash('success','product created successfully');
+
+            return response()->json([
+             'status' => true,
+             'message' => 'Product and images saved successfully']);
         } else {
             return response()->json([
                 'status' => false,

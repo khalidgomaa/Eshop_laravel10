@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Category;
-use App\Models\Sub_Category;
 use App\Models\User;
+use App\Models\Category;
+use App\Models\SubCategory;
 use Illuminate\Database\Seeder;
+use Database\Seeders\CategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +26,7 @@ class DatabaseSeeder extends Seeder
         //    \App\Models\Category::factory(30)->create();
            $this->call([
             CategorySeeder::class,
-            Sub_CategorySeeder::class,
+            SubCategorySeeder::class,
             BrandSeeder::class,
         ]);
     }

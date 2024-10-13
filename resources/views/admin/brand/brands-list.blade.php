@@ -67,8 +67,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                 @if (!empty($brands))
-                                     @foreach ( $brands as $brand )
+                                    @if ($brands->isNotEmpty())
+                                    @foreach ( $brands as $brand )
                                          
                              
                                
